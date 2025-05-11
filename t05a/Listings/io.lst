@@ -1,0 +1,95 @@
+C51 COMPILER V9.59.0.0   IO                                                                05/08/2025 14:42:46 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE IO
+OBJECT MODULE PLACED IN .\Objects\io.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE io.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\io.lst
+                    -) TABS(2) OBJECT(.\Objects\io.obj)
+
+line level    source
+
+   1          /*------------------------------------------*/
+   2          /*  file:     io_config.c         */
+   3          /*  revision: 0 Samuel Lee        */
+   4          /*        1 Samuel Lee  2015-04-12  */
+   5          /*                      */
+   6          /*      (C)2012-2015 IES-Lab      */
+   7          /*      All rights reserved.      */
+   8          /*------------------------------------------*/
+   9          /*------------------------------------------------------------------------------*/
+  10          /*    INCLUDES                                  */
+  11          /*------------------------------------------------------------------------------*/
+  12          #include "io.h"
+  13          
+  14          /*------------------------------------------------------------------------------*/
+  15          /*    GLOBAL FUNCTIONS (IMPLEMENTATIONS)                      */
+  16          /*------------------------------------------------------------------------------*/
+  17          
+  18          void io_config(void)
+  19          {
+  20   1        // Enable Cross-bar
+  21   1        XBR2=Reg_Field_Set(XBR2, BIT6);
+  22   1        
+  23   1        P3MDOUT=0x00;     // All: OD 
+  24   1      
+  25   1        P2MDOUT=0xFF;     ///////////////////////////////////////// 
+  26   1                    // P2.7:        PUSH-PULL
+  27   1                    // P2.6:        PUSH-PULL
+  28   1                    // P2.5:  TUBE6   PUSH-PULL
+  29   1                    // P2.4:  TUBE5   PUSH-PULL
+  30   1                    // P2.3:` TUBE4   PUSH-PULL
+  31   1                    // P2.2:  TUBE3   PUSH-PULL
+  32   1                    // P2.1:  TUBE2   PUSH-PULL
+  33   1                    // P2.0:  TUBE1   PUSH-PULL
+  34   1                    
+  35   1        P1MDOUT=0xFF;     ///////////////// P-P ///////////////////
+  36   1                    // P1.7:  
+  37   1                    // P1.6:  
+  38   1                    // P1.5:  
+  39   1                    // P1.4:
+  40   1                    // P1.3:  
+  41   1                    // P1.2:  
+  42   1                    // P1.1:  
+  43   1                    // P1.0;  
+  44   1      
+  45   1        P0MDOUT=0xC0;     ///////////////// P-P ///////////////////
+  46   1                    // P0.0:  TX0,  OUTPUT,   OD
+  47   1                    // P0.1:  RX0,  INPUT,    OD
+  48   1                    // P0.2:            OD
+  49   1                    // P0.3:            OD
+  50   1                    // P0.4:            OD
+  51   1                    // P0.5:            OD
+  52   1                    // P0.6:  TP1,  OUTPUT,   PP
+  53   1                    // P0.7:  TP0,  OUTPUT,   PP
+  54   1      }
+C51 COMPILER V9.59.0.0   IO                                                                05/08/2025 14:42:46 PAGE 2   
+
+  55          
+  56          void io_init(void)
+  57          {
+  58   1        P7=0xFF;
+  59   1        P6=0xFF;
+  60   1        P5=0xFF;
+  61   1        P4=0xFF;
+  62   1        P3=0xFF;
+  63   1        P2=0xFF;
+  64   1        P1=0xFF;
+  65   1        P0=0xFF;  
+  66   1      }
+  67          
+  68          /* end */
+  69          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     47    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
