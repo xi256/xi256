@@ -1,0 +1,188 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              04/21/2025 19:27:23 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          // main.c
+   2          // 2025-04-14
+   3          
+   4          #include "common.h"
+   5          #include "osc.h"
+   6          
+   7          #define SEG P1
+   8          
+   9          sbit TP0=P0^7;
+  10          sbit TP1=P0^6;
+  11          
+  12          sbit TUBE1=P2^0;
+  13          sbit TUBE2=P2^1;
+  14          sbit TUBE3=P2^2;
+  15          sbit TUBE4=P2^3;
+  16          sbit TUBE5=P2^4;
+  17          sbit TUBE6=P2^5;
+  18          
+  19          
+  20          unsigned char LED_BUF[6]={0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
+  21          // character table      "0"  "1"  "2"  "3"  "4"  "5"  "6"  "7"  "8"  "9"
+  22          unsigned char CHAR[10]={0xC0,0xF9,0xA4,0xB0,0x99,0x92,0x82,0xF8,0x80,0x90};
+  23          
+  24          void tube_off(void)
+  25          {
+  26   1        TUBE1=0;
+  27   1        TUBE2=0;
+  28   1        TUBE3=0;
+  29   1        TUBE4=0;
+  30   1        TUBE5=0;
+  31   1        TUBE6=0;
+  32   1      }
+  33          
+  34          void seg_off(void)
+  35          {
+  36   1        SEG=0xFF;
+  37   1      } 
+  38          
+  39          
+  40          void myTest(void)
+  41          {
+  42   1        int i;
+  43   1        int sta=1;
+  44   1        
+  45   1        while(1){
+  46   2          tube_off();
+  47   2          seg_off();
+  48   2          switch(sta)
+  49   2          {
+  50   3            case 1:
+  51   3              TUBE1=1;
+  52   3              sta=2;
+  53   3              break;
+  54   3            case 2:
+C51 COMPILER V9.60.0.0   MAIN                                                              04/21/2025 19:27:23 PAGE 2   
+
+  55   3              TUBE2=1;
+  56   3              sta=3;
+  57   3              break;
+  58   3            case 3:
+  59   3              TUBE3=1;
+  60   3              sta=4;
+  61   3              break;
+  62   3            case 4:
+  63   3              TUBE4=1;
+  64   3              sta=5;
+  65   3              break;
+  66   3            case 5:
+  67   3              TUBE5=1;
+  68   3              sta=6;
+  69   3              break;
+  70   3            case 6:
+  71   3              TUBE6=1;
+  72   3              sta=1;
+  73   3              break;
+  74   3            default:
+  75   3              break;
+  76   3          }
+  77   2          for(i=0;i<10;i++)
+  78   2          {
+  79   3            SEG=CHAR[i];
+  80   3            Loop_Delay(500);    
+  81   3          } 
+  82   2        }
+  83   1      }
+  84          
+  85          /* main entrance */
+  86          int main()
+  87          {
+  88   1        unsigned char temp;
+  89   1        unsigned int i,j;
+  90   1        Osc_Init_Parameter_t Osc_Init_Parameter;
+  91   1        
+  92   1        EA=0; // global interrupt off
+  93   1        WDTCN=0xDE;
+  94   1        WDTCN=0xAD; // Watch Dog Timer off
+  95   1        
+  96   1        // Config the OSC:
+  97   1        Osc_Init_Parameter.Source_Select=EXTERNAL_OSC;
+  98   1        Osc_Init_Parameter.External_Mode=CRYSTAL;
+  99   1        Osc_Init_Parameter.Frequency=24000000;
+ 100   1        Osc_Init(&Osc_Init_Parameter);
+ 101   1        Loop_Delay(100);
+ 102   1        
+ 103   1        XBR2=Reg_Field_Set(XBR2, BIT6);
+ 104   1        
+ 105   1        // Config Timer0 and make it start to run
+ 106   1        // Timer0: 8bit auto-reload
+ 107   1        TL0=(256-200);
+ 108   1        TH0=(256-200);
+ 109   1        
+ 110   1        ET0=1;
+ 111   1        EA=1;
+ 112   1        
+ 113   1        TMOD=0x02;// 0000 0010, Timer0: 8bit auto-reload
+ 114   1        TR0=1; // start Timer0
+ 115   1        
+ 116   1        myTest();
+C51 COMPILER V9.60.0.0   MAIN                                                              04/21/2025 19:27:23 PAGE 3   
+
+ 117   1        
+ 118   1        while(1);
+ 119   1        
+ 120   1        return 0;
+ 121   1      }// end of main()
+*** WARNING C280 IN LINE 88 OF main.c: 'temp': unreferenced local variable
+*** WARNING C280 IN LINE 89 OF main.c: 'i': unreferenced local variable
+*** WARNING C280 IN LINE 89 OF main.c: 'j': unreferenced local variable
+ 122          
+ 123          void t0_isr(void) interrupt 1 //100us
+ 124          {
+ 125   1        static unsigned int cnt=0;
+ 126   1        static unsigned int state=0;
+ 127   1        
+ 128   1        if(cnt==1000)//every 0.1s
+ 129   1        {
+ 130   2          cnt=0;
+ 131   2          //P4=~P4;
+ 132   2          switch(state)
+ 133   2          {
+ 134   3            case 0:
+ 135   3              P4=~0x01;
+ 136   3              state=1;
+ 137   3              break;
+ 138   3            case 1:
+ 139   3              P4=~0x02;
+ 140   3              state=2;
+ 141   3              break;
+ 142   3            case 2:
+ 143   3              P4=~0x04;
+ 144   3              state=3;
+ 145   3              break;
+ 146   3            case 3:
+ 147   3              P4=~0x08;
+ 148   3              state=0;
+ 149   3              break;  
+ 150   3            default:
+ 151   3              break;
+ 152   3          }
+ 153   2        }
+ 154   1        
+ 155   1        cnt++;
+ 156   1      }
+*** WARNING C294 IN LINE 120 OF main.c: unreachable code
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    321    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     20      15
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  4 WARNING(S),  0 ERROR(S)
